@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AppFarm - {{ domain }}</title>
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg?v=2">
+  <link rel="stylesheet" href="/static/style.css?v=6">
+</head>
+<body>
+  <header>
+    <h1>🌾 AppFarm</h1>
+    <p class="tag">A new app, built by AI, every single day - on <strong>{{ domain }}</strong>.</p>
+  </header>
+
+  <main>
+    {% if soon %}
+    <section class="soon">
+      <span class="badge">SOON</span>
+      <h2>Tomorrow's build</h2>
+      <p class="soon-name">{{ soon.name }}</p>
+      <p class="soon-idea">{% if soon.pitch %}{{ soon.pitch }}{% else %}{{ soon.idea[:240] }}{% if soon.idea|length > 240 %}…{% endif %}{% endif %}</p>
+      {% if soon.monetization %}
+      <p class="soon-money"><span class="money-label">💸 Money</span> {{ soon.monetization }}</p>
+      {% endif %}
+    </section>
+    {% endif %}
+
+    <div class="apps-head">
+      <h2 class="section-title">Live apps</h2>
+      {% if apps %}
+      <label class="sort">
+        Sort
+        <select id="sort">
+          <option value="new">New → Old</option>
+          <option value="old">Old → New</option>
+          <option value="popular">Most popular</option>
+        </select>
+      </label>
+      {% endif %}
+    </div>
+    {% if apps %}
+    <div class="grid" id="grid">
+      {% for a in apps %}
+      <a class="card {% if a.winner %}winner{% endif %}" href="{{ a.url }}" target="_blank" rel="noopener"
+         data-created="{{ a.created_at or 0 }}" data-visits="{{ a.visits }}">
+        {% if a.winner %}<span class="crown">👑</span>{% endif %}
+        <div class="card-head">
+          <img class="app-icon" src="{{ a.url }}/static/favicon.svg" alt="" loading="lazy"
+               onerror="this.style.display='none'">
+          <h3>{{ a.name }}</h3>
+        </div>
+        <p class="sub">{{ a.slug }}.{{ domain }}</p>
+        <p class="visits">{{ a.visits }} visit{{ '' if a.visits == 1 else 's' }}</p>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty">No apps built yet. The first one ships soon.</p>
+    {% endif %}
+  </main>
+
+  <script>
+    (function () {
+      var sel = document.getElementById('sort');
+      var grid = document.getElementById('grid');
+      if (!sel || !grid) return;
+      function num(el, attr) { return parseFloat(el.getAttribute(attr)) || 0; }
+      function apply() {
+        var cards = Array.prototype.slice.call(grid.querySelectorAll('.card'));
+        cards.sort(function (a, b) {
+          if (sel.value === 'popular') return num(b, 'data-visits') - num(a, 'data-visits');
+          if (sel.value === 'old') return num(a, 'data-created') - num(b, 'data-created');
+          return num(b, 'data-created') - num(a, 'data-created');
+        });
+        cards.forEach(function (c) { grid.appendChild(c); });
+      }
+      sel.addEventListener('change', apply);
+      apply();
+    })();
+  </script>
+
+  <footer>
+    <p>👑 = more than {{ threshold }} visits. These are the winners - built automatically,
+       waiting for a human to turn one into a real product.</p>
+  </footer>
+</body>
+</html>

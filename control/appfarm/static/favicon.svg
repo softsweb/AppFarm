@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="leafL" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#16a34a"/>
+      <stop offset="1" stop-color="#4ade80"/>
+    </linearGradient>
+    <linearGradient id="leafR" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#84cc16"/>
+      <stop offset="1" stop-color="#facc15"/>
+    </linearGradient>
+    <linearGradient id="stemG" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#15803d"/>
+      <stop offset="1" stop-color="#65a30d"/>
+    </linearGradient>
+  </defs>
+  <!-- stem -->
+  <path d="M32 60 C30 46 30 38 32 30 C34 38 34 46 32 60 Z" fill="url(#stemG)"/>
+  <!-- left leaf (green) -->
+  <path d="M31 34 C18 34 9 26 8 12 C24 11 33 21 31 34 Z" fill="url(#leafL)"/>
+  <!-- right leaf (lime to yellow) -->
+  <path d="M33 30 C46 28 55 19 56 6 C40 6 31 17 33 30 Z" fill="url(#leafR)"/>
+  <!-- highlight dot -->
+  <circle cx="32" cy="26" r="3.4" fill="#fde047"/>
+</svg>

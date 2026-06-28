@@ -1,0 +1,46 @@
+networks:
+  web:
+    name: appfarm_web
+
+services:
+  traefik:
+    image: traefik:v3.5
+    restart: unless-stopped
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=appfarm_web
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --certificatesresolvers.le.acme.email=${ACME_EMAIL}
+      - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.le.acme.tlschallenge=true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./letsencrypt:/letsencrypt
+    networks: [web]
+
+  control:
+    build: ./control
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - DOCKER_NETWORK=appfarm_web
+      - APP_TEMPLATE_DIR=/app-template
+      - APPFARM_DATA_DIR=/data
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./app-template:/app-template:ro
+      - ./data:/data
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.appfarm.rule=Host(`${DOMAIN}`)
+      - traefik.http.routers.appfarm.entrypoints=websecure
+      - traefik.http.routers.appfarm.tls.certresolver=le
+      - traefik.http.services.appfarm.loadbalancer.server.port=8000
+    networks: [web]

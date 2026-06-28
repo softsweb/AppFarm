@@ -1,0 +1,26 @@
+/* Modern dark base. Claude should replace/extend this to a futuristic,
+   mobile-first design for the specific app. */
+:root {
+  --bg: #0b0d12;
+  --panel: #141821;
+  --line: #232a36;
+  --text: #e9edf5;
+  --muted: #9aa4b2;
+  --accent: #6ee7b7;
+  --accent2: #3b82f6;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background: radial-gradient(1200px 600px at 50% -10%, #16203a 0%, var(--bg) 55%);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+main { text-align: center; max-width: 720px; }
+h1 { font-size: clamp(1.6rem, 5vw, 2.4rem); margin: 16px 0 8px; }
+p { color: var(--muted); }
